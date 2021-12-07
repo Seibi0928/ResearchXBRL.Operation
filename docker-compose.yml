@@ -19,7 +19,7 @@ services:
       resources:
         reservations:
           cpus: '0.2'
-          memory: 0.25G
+          memory: 0.2G
         limits:
           cpus: '0.5'
           memory: 0.5G
@@ -103,10 +103,10 @@ services:
     deploy:
       resources:
         reservations:
-          cpus: '0.2'
-          memory: 0.2G
+          cpus: '0.5'
+          memory: 0.5G
         limits:
-          cpus: '2'
+          cpus: '1.5'
           memory: 1G
     environment:
       DB_SERVERNAME: report-rdb-primary-production
