@@ -8,7 +8,7 @@ services:
   reverse-proxy:
     image: harunari/financial_analysis_reverse_proxy_production:latest
     ports:
-      - "42963:80"
+      - "80:80"
     depends_on:
       - front
       - api
