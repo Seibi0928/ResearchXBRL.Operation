@@ -2,73 +2,137 @@ version: '3.3'
 services:
   front:
     image: harunari/financial_analysis_frontend:stable
-    container_name: frontend_server_production
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.2'
+          memory: 0.2G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
+    container_name: frontend-server-production
     ports:
      - 80
   reverse-proxy:
     image: harunari/financial_analysis_reverse_proxy_production:latest
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.2'
+          memory: 0.25G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
     ports:
-      - "80:80"
+      - "8081:8081"
     depends_on:
       - front
       - api
   api:
     image: harunari/financial_analysis_api:stable
-    container_name: analysis_api_production
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.2'
+          memory: 0.2G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
+    container_name: analysis-api-production
     environment:
-      DB_SERVERNAME: report_rdb_primary_production
+      DB_SERVERNAME: report-rdb-primary-production
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
-      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Production
     ports:
-     - 80
+     - 8080
     depends_on:
-      - wait_db
-      - aquire_financial_reports_batch
-  wait_db:
+      - wait-db
+      - aquire-financial-reports-batch
+  wait-db:
     image: alpine:3.15.0
-    command: bin/sh -c 'while ! nc -z rdb_primary 5432; do sleep 1; done;'
-  rdb_primary:
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.1'
+          memory: 0.1G
+        limits:
+          cpus: '0.1'
+          memory: 0.1G
+    command: bin/sh -c 'while ! nc -z rdb-primary 5432; do sleep 1; done;'
+  rdb-primary:
     image: harunari/financial_report_primary_database:stable
-    container_name: report_rdb_primary_production
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.2'
+          memory: 0.2G
+        limits:
+          cpus: '1'
+          memory: 1G
+    container_name: report-rdb-primary-production
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: mysecretpassword
     ports:
       - 5432
-  import_corporation_info_batch:
+  import-corporation-info-batch:
     image: harunari/import_corporation_info_batch:stable
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.2'
+          memory: 0.2G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
     environment:
-      DB_SERVERNAME: report_rdb_primary_production
+      DB_SERVERNAME: report-rdb-primary-production
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
     depends_on:
-      - wait_db
-  aquire_financial_reports_batch:
+      - wait-db
+  aquire-financial-reports-batch:
     image: harunari/aquire_financial_reports_batch:stable
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.2'
+          memory: 0.2G
+        limits:
+          cpus: '2'
+          memory: 1G
     environment:
-      DB_SERVERNAME: report_rdb_primary_production
+      DB_SERVERNAME: report-rdb-primary-production
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
     depends_on:
-      - wait_db
-      - aquire_account_items_batch
-      - import_corporation_info_batch
-  aquire_account_items_batch:
+      - wait-db
+      - aquire-account-items-batch
+      - import-corporation-info-batch
+  aquire-account-items-batch:
     image: harunari/aquire_account_items_batch:stable
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.2'
+          memory: 0.2G
+        limits:
+          cpus: '0.5'
+          memory: 1G
     environment:
-      DB_SERVERNAME: report_rdb_primary_production
+      DB_SERVERNAME: report-rdb-primary-production
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
     depends_on:
-      - wait_db
+      - wait-db
