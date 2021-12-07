@@ -1,0 +1,74 @@
+version: '3.3'
+services:
+  front:
+    image: harunari/financial_analysis_frontend:stable
+    container_name: frontend_server_production
+    ports:
+     - 80
+  reverse-proxy:
+    image: harunari/financial_analysis_reverse_proxy_production:latest
+    ports:
+      - "42963:80"
+    depends_on:
+      - front
+      - api
+  api:
+    image: harunari/financial_analysis_api:stable
+    container_name: analysis_api_production
+    environment:
+      DB_SERVERNAME: report_rdb_primary_production
+      DB_USERID: postgres
+      DB_NAME: postgres
+      DB_PORT: 5432
+      DB_PASSWORD: mysecretpassword
+      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Production
+    ports:
+     - 80
+    depends_on:
+      - wait_db
+      - aquire_financial_reports_batch
+  wait_db:
+    image: alpine:3.15.0
+    command: bin/sh -c 'while ! nc -z rdb_primary 5432; do sleep 1; done;'
+  rdb_primary:
+    image: harunari/financial_report_primary_database:stable
+    container_name: report_rdb_primary_production
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+    ports:
+      - 5432
+  import_corporation_info_batch:
+    image: harunari/import_corporation_info_batch:stable
+    environment:
+      DB_SERVERNAME: report_rdb_primary_production
+      DB_USERID: postgres
+      DB_NAME: postgres
+      DB_PORT: 5432
+      DB_PASSWORD: mysecretpassword
+    depends_on:
+      - wait_db
+  aquire_financial_reports_batch:
+    image: harunari/aquire_financial_reports_batch:stable
+    environment:
+      DB_SERVERNAME: report_rdb_primary_production
+      DB_USERID: postgres
+      DB_NAME: postgres
+      DB_PORT: 5432
+      DB_PASSWORD: mysecretpassword
+    depends_on:
+      - wait_db
+      - aquire_account_items_batch
+      - import_corporation_info_batch
+  aquire_account_items_batch:
+    image: harunari/aquire_account_items_batch:stable
+    environment:
+      DB_SERVERNAME: report_rdb_primary_production
+      DB_USERID: postgres
+      DB_NAME: postgres
+      DB_PORT: 5432
+      DB_PASSWORD: mysecretpassword
+    depends_on:
+      - wait_db
