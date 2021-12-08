@@ -5,8 +5,8 @@ services:
     deploy:
       resources:
         reservations:
-          cpus: '0.2'
-          memory: 0.2G
+          cpus: '0.5'
+          memory: 0.5G
         limits:
           cpus: '0.5'
           memory: 0.5G
@@ -18,8 +18,8 @@ services:
     deploy:
       resources:
         reservations:
-          cpus: '0.2'
-          memory: 0.2G
+          cpus: '0.5'
+          memory: 0.5G
         limits:
           cpus: '0.5'
           memory: 0.5G
@@ -33,14 +33,14 @@ services:
     deploy:
       resources:
         reservations:
-          cpus: '0.2'
-          memory: 0.2G
+          cpus: '0.5'
+          memory: 0.5G
         limits:
           cpus: '0.5'
           memory: 0.5G
     container_name: analysis-api-production
     environment:
-      DB_SERVERNAME: report-rdb-primary-production
+      DB_SERVERNAME: localhost
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
@@ -50,19 +50,7 @@ services:
     ports:
      - 8080
     depends_on:
-      - wait-db
-      - aquire-financial-reports-batch
-  wait-db:
-    image: alpine:3.15.0
-    deploy:
-      resources:
-        reservations:
-          cpus: '0.1'
-          memory: 0.1G
-        limits:
-          cpus: '0.1'
-          memory: 0.1G
-    command: bin/sh -c 'while ! nc -z rdb-primary 5432; do sleep 1; done;'
+     - aquire-financial-reports-batch
   rdb-primary:
     image: harunari/financial_report_primary_database:stable
     deploy:
@@ -80,24 +68,6 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
     ports:
       - 5432
-  import-corporation-info-batch:
-    image: harunari/import_corporation_info_batch:stable
-    deploy:
-      resources:
-        reservations:
-          cpus: '0.2'
-          memory: 0.2G
-        limits:
-          cpus: '0.5'
-          memory: 0.5G
-    environment:
-      DB_SERVERNAME: report-rdb-primary-production
-      DB_USERID: postgres
-      DB_NAME: postgres
-      DB_PORT: 5432
-      DB_PASSWORD: mysecretpassword
-    depends_on:
-      - wait-db
   aquire-financial-reports-batch:
     image: harunari/aquire_financial_reports_batch:stable
     deploy:
@@ -106,33 +76,24 @@ services:
           cpus: '0.5'
           memory: 0.5G
         limits:
-          cpus: '1.5'
+          cpus: '2'
           memory: 1G
     environment:
-      DB_SERVERNAME: report-rdb-primary-production
+      DB_SERVERNAME: localhost
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
+    command: > 
+      /bin/bash -c "
+        # これがないとcron jobで環境変数を読み込めない
+        printenv | grep -v "no_proxy" >> /etc/environment;mkdir /etc/cron.d;
+        # 毎日午前1時にバッチ実行
+        echo '0 1 * * * dotnet /app/AquireFinancialReports.dll >> /var/log/cron.log 2>&1' >> /etc/cron.d/hello-cron2;
+        chmod 0644 /etc/cron.d/hello-cron2;
+        apt update && apt install -y cron;
+        service cron start;
+        crontab /etc/cron.d/hello-cron2;
+        while sleep 1000; do :; done"
     depends_on:
-      - wait-db
-      - aquire-account-items-batch
-      - import-corporation-info-batch
-  aquire-account-items-batch:
-    image: harunari/aquire_account_items_batch:stable
-    deploy:
-      resources:
-        reservations:
-          cpus: '0.2'
-          memory: 0.2G
-        limits:
-          cpus: '0.5'
-          memory: 1G
-    environment:
-      DB_SERVERNAME: report-rdb-primary-production
-      DB_USERID: postgres
-      DB_NAME: postgres
-      DB_PORT: 5432
-      DB_PASSWORD: mysecretpassword
-    depends_on:
-      - wait-db
+      - rdb-primary
