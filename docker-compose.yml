@@ -2,98 +2,66 @@ version: '3.3'
 services:
   front:
     image: harunari/financial_analysis_frontend:stable
-    deploy:
-      resources:
-        reservations:
-          cpus: '0.5'
-          memory: 0.5G
-        limits:
-          cpus: '0.5'
-          memory: 0.5G
-    container_name: frontend-server-production
+    container_name: frontend-server
     ports:
-     - 80
-  reverse-proxy:
-    image: harunari/financial_analysis_reverse_proxy_production:latest
-    deploy:
-      resources:
-        reservations:
-          cpus: '0.5'
-          memory: 0.5G
-        limits:
-          cpus: '0.5'
-          memory: 0.5G
-    ports:
-      - "8081:8081"
-    depends_on:
-      - front
-      - api
+     - "80"
   api:
     image: harunari/financial_analysis_api:stable
-    deploy:
-      resources:
-        reservations:
-          cpus: '0.5'
-          memory: 0.5G
-        limits:
-          cpus: '0.5'
-          memory: 0.5G
-    container_name: analysis-api-production
+    container_name: analysis_api
     environment:
-      DB_SERVERNAME: localhost
+      DB_SERVERNAME: report_rdb_primary
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
-      ASPNETCORE_URLS: http://+:8080
-      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Development
     ports:
-     - 8080
+     - "80"
     depends_on:
-     - aquire-financial-reports-batch
-  rdb-primary:
+      - rdb_primary
+      - aquire_financial_reports_batch
+  rdb_primary:
     image: harunari/financial_report_primary_database:stable
-    deploy:
-      resources:
-        reservations:
-          cpus: '0.2'
-          memory: 0.2G
-        limits:
-          cpus: '1'
-          memory: 1G
-    container_name: report-rdb-primary-production
+    container_name: report-rdb-primary
+    volumes:
+      - primary_database:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: mysecretpassword
-    ports:
+    expose:
       - 5432
-  aquire-financial-reports-batch:
-    image: harunari/aquire_financial_reports_batch:stable
-    deploy:
-      resources:
-        reservations:
-          cpus: '0.5'
-          memory: 0.5G
-        limits:
-          cpus: '2'
-          memory: 1G
+  import_corporation_info_batch:
+    image: harunari/import_corporation_info_batch:stable
     environment:
-      DB_SERVERNAME: localhost
+      DB_SERVERNAME: report_rdb_primary
       DB_USERID: postgres
       DB_NAME: postgres
       DB_PORT: 5432
       DB_PASSWORD: mysecretpassword
-    command: > 
-      /bin/bash -c "
-        # これがないとcron jobで環境変数を読み込めない
-        printenv | grep -v "no_proxy" >> /etc/environment;mkdir /etc/cron.d;
-        # 毎日午前1時にバッチ実行
-        echo '0 1 * * * dotnet /app/AquireFinancialReports.dll >> /var/log/cron.log 2>&1' >> /etc/cron.d/hello-cron2;
-        chmod 0644 /etc/cron.d/hello-cron2;
-        apt update && apt install -y cron;
-        service cron start;
-        crontab /etc/cron.d/hello-cron2;
-        while sleep 1000; do :; done"
     depends_on:
-      - rdb-primary
+      - rdb_primary
+  aquire_financial_reports_batch:
+    image: harunari/aquire_financial_reports_batch:stable
+    container_name: aquire-financial-reports-batch
+    environment:
+      DB_SERVERNAME: report_rdb_primary
+      DB_USERID: postgres
+      DB_NAME: postgres
+      DB_PORT: 5432
+      DB_PASSWORD: mysecretpassword
+    depends_on:
+      - rdb_primary
+      - aquire_account_items_batch
+      - import_corporation_info_batch
+  aquire_account_items_batch:
+    image: harunari/aquire_account_items_batch:stable
+    environment:
+      DB_SERVERNAME: report_rdb_primary
+      DB_USERID: postgres
+      DB_NAME: postgres
+      DB_PORT: 5432
+      DB_PASSWORD: mysecretpassword
+    depends_on:
+      - rdb_primary

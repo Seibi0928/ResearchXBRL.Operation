@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ./docker-compose.yml
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: import-corporation-info-batch
+  name: import-corporation-info-batch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: import-corporation-info-batch
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ./docker-compose.yml
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: import-corporation-info-batch
+    spec:
+      containers:
+        - env:
+            - name: DB_NAME
+              value: postgres
+            - name: DB_PASSWORD
+              value: mysecretpassword
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SERVERNAME
+              value: rdb-primary
+            - name: DB_USERID
+              value: postgres
+          image: harunari/import_corporation_info_batch:stable
+          name: import_corporation_info_batch
+          resources: {}
+      restartPolicy: Always
+status: {}
