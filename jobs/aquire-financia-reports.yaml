@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: aquire-financial-report
+spec:
+  schedule: 0 1 * * *
+  concurrencyPolicy: Forbid
+  suspend: false
+  jobTemplate:
+    spec:
+      backoffLimit: 6
+      template:
+        spec:
+          containers:
+          - name: aquire-financial-report
+            image: harunari/aquire_financial_reports_batch:stable
+            imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
