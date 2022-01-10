@@ -13,9 +13,6 @@ spec:
   strategy: {}
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert -f ./docker-compose.yml
-        kompose.version: 1.26.0 (40646f47)
       creationTimestamp: null
       labels:
         app: api
