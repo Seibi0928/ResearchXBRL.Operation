@@ -1,19 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f ./docker-compose.yml
-    kompose.version: 1.26.0 (40646f47)
-  creationTimestamp: null
+  name: rdb-primary-service
   labels:
-    io.kompose.service: rdb-primary
-  name: rdb-primary
+    app: rdb-primary
 spec:
+  selector:
+    app: rdb-primary
   ports:
     - name: "5432"
       port: 5432
       targetPort: 5432
-  selector:
-    io.kompose.service: rdb-primary
 status:
   loadBalancer: {}
