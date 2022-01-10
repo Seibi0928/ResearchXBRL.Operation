@@ -1,18 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f ./docker-compose.yml
-    kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: api
+    app: api
   name: api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: api
+      app: api
   strategy: {}
   template:
     metadata:
@@ -21,7 +18,7 @@ spec:
         kompose.version: 1.26.0 (40646f47)
       creationTimestamp: null
       labels:
-        io.kompose.service: api
+        app: api
     spec:
       containers:
         - env:
