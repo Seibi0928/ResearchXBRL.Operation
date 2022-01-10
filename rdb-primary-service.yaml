@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: rdb-primary-service
+  name: rdb-primary
   labels:
     app: rdb-primary
 spec:

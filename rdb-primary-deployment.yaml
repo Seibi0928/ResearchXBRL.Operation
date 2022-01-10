@@ -22,7 +22,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rdb-primary-deployment
+  name: rdb-primary
   labels:
     app: rdb-primary
 spec:
