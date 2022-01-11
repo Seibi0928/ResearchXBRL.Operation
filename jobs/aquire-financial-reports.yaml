@@ -15,4 +15,27 @@ spec:
           - name: aquire-financial-report
             image: harunari/aquire_financial_reports_batch:stable
             imagePullPolicy: IfNotPresent
+            env:
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-db-name
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-password
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SERVERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-server-name
+            - name: DB_USERID
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-user
           restartPolicy: OnFailure

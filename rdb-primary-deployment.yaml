@@ -38,15 +38,24 @@ spec:
         app: rdb-primary
     spec:
       containers:
-        - env:
-          - name: POSTGRES_DB
-            value: postgres
-          - name: POSTGRES_PASSWORD
-            value: mysecretpassword
-          - name: POSTGRES_USER
-            value: postgres
+        - name: rdb-primary
           image: harunari/financial_report_primary_database:stable
-          name: rdb-primary
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-db-name
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-password
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-user
           ports:
             - containerPort: 5432
           resources:

@@ -8,17 +8,29 @@ spec:
   template:
     spec:
       containers:
-        - env:
-            - name: DB_NAME
-              value: postgres
-            - name: DB_PASSWORD
-              value: mysecretpassword
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_SERVERNAME
-              value: rdb-primary
-            - name: DB_USERID
-              value: postgres
+        - name: aquire-account-items
           image: harunari/aquire_account_items_batch:stable
-          name: aquire-account-items
+          env:
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: rdb-primary-secret
+                key: rdb-primary-db-name
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: rdb-primary-secret
+                key: rdb-primary-password
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_SERVERNAME
+            valueFrom:
+              secretKeyRef:
+                name: rdb-primary-secret
+                key: rdb-primary-server-name
+          - name: DB_USERID
+            valueFrom:
+              secretKeyRef:
+                name: rdb-primary-secret
+                key: rdb-primary-user
       restartPolicy: OnFailure

@@ -8,17 +8,29 @@ spec:
   template:
     spec:
       containers:
-        - env:
+        - name: import-corporation-info
+          image: harunari/import_corporation_info_batch:stable
+          env:
             - name: DB_NAME
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-db-name
             - name: DB_PASSWORD
-              value: mysecretpassword
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-password
             - name: DB_PORT
               value: "5432"
             - name: DB_SERVERNAME
-              value: rdb-primary
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-server-name
             - name: DB_USERID
-              value: postgres
-          image: harunari/import_corporation_info_batch:stable
-          name: import-corporation-info
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-user
       restartPolicy: OnFailure

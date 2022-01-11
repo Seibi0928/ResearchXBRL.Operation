@@ -18,23 +18,35 @@ spec:
         app: api
     spec:
       containers:
-        - env:
-            - name: ASPNETCORE_ENVIRONMENT
-              value: Development
-            - name: ASPNETCORE_URLS
-              value: http://+:80
-            - name: DB_NAME
-              value: postgres
-            - name: DB_PASSWORD
-              value: mysecretpassword
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_SERVERNAME
-              value: rdb-primary
-            - name: DB_USERID
-              value: postgres
+        - name: analysis-api
           image: harunari/financial_analysis_api:stable
-          name: analysis-api
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Production
+          - name: ASPNETCORE_URLS
+            value: http://+:80
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: rdb-primary-secret
+                key: rdb-primary-db-name
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: rdb-primary-secret
+                key: rdb-primary-password
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_SERVERNAME
+            valueFrom:
+              secretKeyRef:
+                name: rdb-primary-secret
+                key: rdb-primary-server-name
+          - name: DB_USERID
+            valueFrom:
+              secretKeyRef:
+                name: rdb-primary-secret
+                key: rdb-primary-user
           ports:
             - containerPort: 80
           resources: {}
