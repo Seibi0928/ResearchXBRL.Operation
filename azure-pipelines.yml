@@ -84,7 +84,7 @@ steps:
     azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
     azureResourceGroup: 'autoTrader'
     kubernetesCluster: 'autoTrader'
-    namespace: 'ingress'
+    namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
     configuration: 'ingress.yaml'
