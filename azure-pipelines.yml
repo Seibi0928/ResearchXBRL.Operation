@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - master
 
@@ -11,6 +6,31 @@ pool:
 
 steps:
 - task: Kubernetes@1
+  displayName: 'apply rdb-primary-deployment'
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
+    azureResourceGroup: 'autoTrader'
+    kubernetesCluster: 'autoTrader'
+    namespace: 'default'
+    command: 'apply'
+    useConfigurationFile: true
+    configuration: 'rdb-primary-deployment.yaml'
+    secretType: 'generic'
+- task: Kubernetes@1
+  displayName: 'apply rdb-primary-service'
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
+    azureResourceGroup: 'autoTrader'
+    kubernetesCluster: 'autoTrader'
+    namespace: 'default'
+    command: 'apply'
+    useConfigurationFile: true
+    configuration: 'rdb-primary-service.yaml'
+    secretType: 'generic'
+- task: Kubernetes@1
+  displayName: 'apply api-deployment'
   inputs:
     connectionType: 'Azure Resource Manager'
     azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
@@ -22,6 +42,7 @@ steps:
     configuration: 'api-deployment.yaml'
     secretType: 'generic'
 - task: Kubernetes@1
+  displayName: 'apply api-service'
   inputs:
     connectionType: 'Azure Resource Manager'
     azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
@@ -31,4 +52,52 @@ steps:
     command: 'apply'
     useConfigurationFile: true
     configuration: 'api-service.yaml'
+    secretType: 'generic'
+- task: Kubernetes@1
+  displayName: 'apply front-deployment'
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
+    azureResourceGroup: 'autoTrader'
+    kubernetesCluster: 'autoTrader'
+    namespace: 'default'
+    command: 'apply'
+    useConfigurationFile: true
+    configuration: 'front-deployment.yaml'
+    secretType: 'generic'
+- task: Kubernetes@1
+  displayName: 'apply front-service'
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
+    azureResourceGroup: 'autoTrader'
+    kubernetesCluster: 'autoTrader'
+    namespace: 'default'
+    command: 'apply'
+    useConfigurationFile: true
+    configuration: 'front-service.yaml'
+    secretType: 'generic'
+- task: Kubernetes@1
+  displayName: 'apply front-ingress'
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
+    azureResourceGroup: 'autoTrader'
+    kubernetesCluster: 'autoTrader'
+    namespace: 'ingress'
+    command: 'apply'
+    useConfigurationFile: true
+    configuration: 'ingress.yaml'
+    secretType: 'generic'
+- task: Kubernetes@1
+  displayName: 'apply cron job aquire-financial-reports'
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
+    azureResourceGroup: 'autoTrader'
+    kubernetesCluster: 'autoTrader'
+    namespace: 'default'
+    command: 'apply'
+    useConfigurationFile: true
+    configuration: 'jobs/cron/aquire-financial-reports.yaml'
     secretType: 'generic'
