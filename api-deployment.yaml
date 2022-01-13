@@ -6,11 +6,15 @@ metadata:
     app: api
   name: api
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: api
-  strategy: {}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
   template:
     metadata:
       creationTimestamp: null
@@ -49,6 +53,12 @@ spec:
                 key: rdb-primary-user
           ports:
             - containerPort: 80
-          resources: {}
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
       restartPolicy: Always
 status: {}
