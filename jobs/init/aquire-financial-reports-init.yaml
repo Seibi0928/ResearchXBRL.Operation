@@ -9,8 +9,8 @@ spec:
     spec:
       containers:
       - name: aquire-financial-report-init
-        image: harunari/aquire_financial_reports_batch:stable-286
-        command: ["dotnet", "/app/AquireFinancialReports.dll", "--from", "2017-2-23", "--to 2022-2-22", "--maxParallelism 4"]
+        image: harunari/aquire_financial_reports_batch:stable-331
+        command: ["dotnet", "/app/AquireFinancialReports.dll", "--from", "2017-3-4", "--to 2022-3-3", "--maxParallelism 4"]
         imagePullPolicy: IfNotPresent
         env:
         - name: DB_NAME

@@ -39,7 +39,7 @@ spec:
     spec:
       containers:
         - name: rdb-primary
-          image: harunari/financial_report_primary_database:stable
+          image: harunari/financial_report_primary_database:stable-331
           env:
             - name: POSTGRES_DB
               valueFrom:

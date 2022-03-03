@@ -22,7 +22,7 @@ spec:
         app: front
     spec:
       containers:
-        - image: harunari/financial_analysis_frontend:stable-274
+        - image: harunari/financial_analysis_frontend:stable-335
           name: frontend-server
           ports:
             - containerPort: 80
