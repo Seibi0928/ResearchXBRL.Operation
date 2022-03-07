@@ -20,6 +20,24 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: front-script-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /dist/app-bundle.js
+            pathType: Prefix
+            backend:
+              service:
+                name: front
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
   name: backend-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
