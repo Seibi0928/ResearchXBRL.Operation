@@ -1,0 +1,82 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: file-storage
+provisioner: kubernetes.io/azure-disk
+parameters:
+  skuName: Standard_LRS
+  location: japaneast
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sftp-file-storage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: file-storage
+  resources:
+    requests:
+      storage: 5Gi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sftp
+  namespace: default
+  labels:
+    environment: test
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "ssh"
+    port: 22
+    targetPort: 22
+  selector:
+    app: sftp
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: sftp
+  namespace: default
+  labels:
+    environment: test
+    app: sftp
+spec:
+  replicas: 1
+  minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: sftp
+  template:
+    metadata:
+      labels:
+        app: sftp
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/sftp: runtime/default
+    spec:
+      volumes:
+      - name: sftp-file-storage
+        persistentVolumeClaim:
+          claimName: sftp-file-storage
+      containers:
+        - name: sftp
+          image: atmoz/sftp:latest
+          imagePullPolicy: Always
+          env:
+          - name: PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: sftp-server-secret
+                key: password
+          args: ["sftp_user:$(PASSWORD):1001:100:upload"] #create users and dirs
+          ports:
+            - containerPort: 22
+          volumeMounts:
+            - mountPath: /home/sftp_user/upload
+              name: sftp-file-storage
+          securityContext:
+            capabilities:
+              add: ["SYS_ADMIN"]
+          resources: {}

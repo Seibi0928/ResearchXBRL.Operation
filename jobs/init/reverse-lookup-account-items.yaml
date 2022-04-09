@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reverse-lookup-account-items
+spec:
+  backoffLimit: 2
+  completions: 1
+  template:
+    spec:
+      containers:
+        - name: reverse-lookup-account-items
+          image: harunari/reverse_lookup_account_items_batch:alpha-396
+          command: ["dotnet", "/app/ReverseLookupAccountItems.dll", "--file-name", "ReverseLookupDictionary.csv"]
+          env:
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-db-name
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-password
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SERVERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-server-name
+            - name: DB_USERID
+              valueFrom:
+                secretKeyRef:
+                  name: rdb-primary-secret
+                  key: rdb-primary-user
+            - name: FILESTORAGE_HOST
+              value: sftp
+            - name: FILESTORAGE_USERID
+              value: sftp_user
+            - name: FILESTORAGE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sftp-server-secret
+                  key: password
+            - name: FILESTORAGE_BASEDIR
+              value: upload
+      restartPolicy: OnFailure
