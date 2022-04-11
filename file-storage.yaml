@@ -62,7 +62,7 @@ spec:
           claimName: sftp-file-storage
       containers:
         - name: sftp
-          image: atmoz/sftp:latest
+          image: harunari/sftp-server:stable-409
           imagePullPolicy: Always
           env:
           - name: PASSWORD
@@ -70,7 +70,7 @@ spec:
               secretKeyRef:
                 name: sftp-server-secret
                 key: password
-          args: ["sftp_user:$(PASSWORD):1001:100:upload"] #create users and dirs
+          args: ["sftp_user:$(PASSWORD):::upload"]
           ports:
             - containerPort: 22
           volumeMounts:
