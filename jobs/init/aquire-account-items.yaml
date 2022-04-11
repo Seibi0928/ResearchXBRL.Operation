@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: aquire-account-items
+  name: aquire-account-items-recovery-20220412
 spec:
   backoffLimit: 6
   completions: 1
