@@ -1,16 +1,23 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: reverse-lookup-account-items
+  name: reverse-lookup-account-items-20220427
 spec:
-  backoffLimit: 2
+  backoffLimit: 100
   completions: 1
   template:
     spec:
       containers:
         - name: reverse-lookup-account-items
-          image: harunari/reverse_lookup_account_items_batch:alpha-396
-          command: ["dotnet", "/app/ReverseLookupAccountItems.dll", "--file-name", "ReverseLookupDictionary.csv"]
+          image: harunari/reverse_lookup_account_items_batch:stable-413
+          command: [
+            "dotnet",
+            "/app/ReverseLookupAccountItems.dll", 
+            "--file-name", 
+            "ReverseLookupDictionary.csv",
+            "--output-file-name",
+            "output.csv"
+          ]
           env:
             - name: DB_NAME
               valueFrom:
