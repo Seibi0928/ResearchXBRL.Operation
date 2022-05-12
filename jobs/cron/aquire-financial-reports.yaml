@@ -13,7 +13,7 @@ spec:
         spec:
           containers:
           - name: aquire-financial-report
-            image: harunari/aquire_financial_reports_batch:stable-331
+            image: harunari/aquire_financial_reports_batch:stable-420
             imagePullPolicy: IfNotPresent
             env:
             - name: DB_NAME

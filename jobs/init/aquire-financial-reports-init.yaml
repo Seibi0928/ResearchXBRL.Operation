@@ -1,16 +1,16 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: aquire-financial-report-init
+  name: aquire-financial-report-recovery-20220512
 spec:
   backoffLimit: 6
   completions: 1
   template:
     spec:
       containers:
-      - name: aquire-financial-report-init
-        image: harunari/aquire_financial_reports_batch:stable-331
-        command: ["dotnet", "/app/AquireFinancialReports.dll", "--from", "2017-3-4", "--to 2022-3-3", "--maxParallelism 4"]
+      - name: aquire-financial-report
+        image: harunari/aquire_financial_reports_batch:stable-420
+        command: ["dotnet", "/app/AquireFinancialReports.dll", "--from", "2020-3-4", "--to", "2022-5-11", "--max-parallelism", "2"]
         imagePullPolicy: IfNotPresent
         env:
         - name: DB_NAME
