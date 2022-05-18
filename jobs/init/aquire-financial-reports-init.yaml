@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
       - name: aquire-financial-report
-        image: harunari/aquire_financial_reports_batch:stable-420
+        image: harunari/aquire_financial_reports_batch:stable-431
         command: ["dotnet", "/app/AquireFinancialReports.dll", "--from", "2020-3-4", "--to", "2022-5-11", "--max-parallelism", "2"]
         imagePullPolicy: IfNotPresent
         env:

@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
         - name: reverse-lookup-account-items
-          image: harunari/reverse_lookup_account_items_batch:stable-425
+          image: harunari/reverse_lookup_account_items_batch:stable-431
           command: [
             "dotnet",
             "/app/ReverseLookupAccountItems.dll", 

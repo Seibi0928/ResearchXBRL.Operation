@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: analysis-api
-          image: harunari/financial_analysis_api:stable-425
+          image: harunari/financial_analysis_api:stable-431
           env:
           - name: ASPNETCORE_ENVIRONMENT
             value: Production

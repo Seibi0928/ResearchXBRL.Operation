@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
         - name: aquire-account-items
-          image: harunari/aquire_account_items_batch:stable-425
+          image: harunari/aquire_account_items_batch:stable-431
           env:
           - name: DB_NAME
             valueFrom:
