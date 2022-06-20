@@ -38,37 +38,30 @@ spec:
         app: rdb-primary
     spec:
       containers:
-        - name: rdb-primary
-          image: harunari/financial_report_primary_database:stable-361
-          env:
-            - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: rdb-primary-secret
-                  key: rdb-primary-db-name
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: rdb-primary-secret
-                  key: rdb-primary-password
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: rdb-primary-secret
-                  key: rdb-primary-user
-          ports:
-            - containerPort: 5432
-          resources:
-            requests:
-              cpu: 100m
-              memory: 1Gi
-            limits:
-              cpu: 500m
-              memory: 3Gi
-          volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: primary-database
-              subPath: postgres
+      - name: rdb-primary
+        image: harunari/financial_report_primary_database:stable-361
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: rdb-primary-secret
+              key: rdb-primary-db-name
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rdb-primary-secret
+              key: rdb-primary-password
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: rdb-primary-secret
+              key: rdb-primary-user
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: primary-database
+          subPath: postgres
       restartPolicy: Always
       volumes:
       - name: primary-database
