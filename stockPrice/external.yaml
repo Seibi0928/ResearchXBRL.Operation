@@ -1,0 +1,9 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: sftp
+  namespace: stock-price
+spec:
+  type: ExternalName
+  externalName: sftp.default.svc.cluster.local
+  - port: 22
