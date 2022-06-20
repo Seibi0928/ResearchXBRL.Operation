@@ -1,0 +1,84 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: auto-trade-stock-price-storage
+  namespace: stock-price
+provisioner: kubernetes.io/azure-disk
+parameters:
+  skuName: Standard_LRS
+  location: japaneast
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: auto-trade-stock-price-storage
+  namespace: stock-price
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: auto-trade-stock-price-storage
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: auto-trade-stock-price-storage
+  namespace: stock-price
+spec:
+  serviceName: stock-price-repository
+  selector:
+    matchLabels:
+      app: stock-price-repository
+  template:
+    metadata:
+      labels:
+        app: stock-price-repository
+    spec:
+      containers:
+      - name: stock-price-repository
+        image: harunari/stock_price_repository:stable-448
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: stock-price-secret
+              key: repository-db-name
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: stock-price-secret
+              key: repository-password
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: stock-price-secret
+              key: repository-user
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: repository-volume
+          subPath: postgres
+      volumes:
+      - name: repository-volume
+        persistentVolumeClaim:
+          claimName: auto-trade-stock-price-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-price-repository
+  namespace: stock-price
+  labels:
+    app: stock-price-repository
+spec:
+  selector:
+    app: stock-price-repository
+  ports:
+    - name: "5432"
+      port: 5432
+      targetPort: 5432
+status:
+  loadBalancer: {}
