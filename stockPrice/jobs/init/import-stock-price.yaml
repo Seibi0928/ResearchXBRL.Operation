@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: import-stock-price
+  namespace: stock-price
+spec:
+  backoffLimit: 100
+  completions: 1
+  template:
+    spec:
+      containers:
+        - name: import-stock-price
+          image: harunari/import_stock_price:stable
+          command: [
+            "import_stock_price",
+            "-f", 
+            "stock-data.csv"
+          ]
+          env:
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: stock-price-secret
+                  key: repository-db-name
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stock-price-secret
+                  key: repository-password
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SERVERNAME
+              value: stock-price-repository
+            - name: DB_USERID
+              valueFrom:
+                secretKeyRef:
+                  name: stock-price-secret
+                  key: repository-user
+            - name: FILESTORAGE_HOST
+              value: sftp
+            - name: FILESTORAGE_USERID
+              value: sftp_user
+            - name: FILESTORAGE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stock-price-secret
+                  key: file-storage-password
+            - name: FILESTORAGE_BASEDIR
+              value: upload
+      restartPolicy: OnFailure
