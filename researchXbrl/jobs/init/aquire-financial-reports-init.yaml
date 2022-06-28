@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: aquire-financial-report-recovery-20220512
+  namespace: research-xbrl
 spec:
   backoffLimit: 6
   completions: 1
@@ -16,23 +17,23 @@ spec:
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
-              name: rdb-primary-secret
+              name: research-xbrl-secret
               key: rdb-primary-db-name
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: rdb-primary-secret
+              name: research-xbrl-secret
               key: rdb-primary-password
         - name: DB_PORT
           value: "5432"
         - name: DB_SERVERNAME
           valueFrom:
             secretKeyRef:
-              name: rdb-primary-secret
+              name: research-xbrl-secret
               key: rdb-primary-server-name
         - name: DB_USERID
           valueFrom:
             secretKeyRef:
-              name: rdb-primary-secret
+              name: research-xbrl-secret
               key: rdb-primary-user
       restartPolicy: OnFailure

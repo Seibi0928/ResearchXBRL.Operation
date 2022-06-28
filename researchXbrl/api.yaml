@@ -5,8 +5,9 @@ metadata:
   labels:
     app: api
   name: api
+  namespace: research-xbrl
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: api
@@ -32,24 +33,24 @@ spec:
           - name: DB_NAME
             valueFrom:
               secretKeyRef:
-                name: rdb-primary-secret
+                name: research-xbrl-secret
                 key: rdb-primary-db-name
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: rdb-primary-secret
+                name: research-xbrl-secret
                 key: rdb-primary-password
           - name: DB_PORT
             value: "5432"
           - name: DB_SERVERNAME
             valueFrom:
               secretKeyRef:
-                name: rdb-primary-secret
+                name: research-xbrl-secret
                 key: rdb-primary-server-name
           - name: DB_USERID
             valueFrom:
               secretKeyRef:
-                name: rdb-primary-secret
+                name: research-xbrl-secret
                 key: rdb-primary-user
           ports:
             - containerPort: 80
@@ -67,11 +68,30 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: api-hpa
+  namespace: research-xbrl
 spec:
-  maxReplicas: 10
-  minReplicas: 2
+  maxReplicas: 1
+  minReplicas: 1
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: api
   targetCPUUtilizationPercentage: 50
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: api
+  name: api
+  namespace: research-xbrl
+spec:
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 80
+  selector:
+    app: api
+status:
+  loadBalancer: {}

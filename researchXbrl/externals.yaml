@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: sftp
+  namespace: research-xbrl
+spec:
+  type: ExternalName
+  externalName: sftp.default.svc.cluster.local
+  ports:
+  - port: 22

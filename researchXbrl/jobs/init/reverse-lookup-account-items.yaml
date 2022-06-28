@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: reverse-lookup-account-items-20220427
+  namespace: research-xbrl
 spec:
   backoffLimit: 100
   completions: 1
@@ -22,24 +23,24 @@ spec:
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: rdb-primary-secret
+                  name: research-xbrl-secret
                   key: rdb-primary-db-name
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: rdb-primary-secret
+                  name: research-xbrl-secret
                   key: rdb-primary-password
             - name: DB_PORT
               value: "5432"
             - name: DB_SERVERNAME
               valueFrom:
                 secretKeyRef:
-                  name: rdb-primary-secret
+                  name: research-xbrl-secret
                   key: rdb-primary-server-name
             - name: DB_USERID
               valueFrom:
                 secretKeyRef:
-                  name: rdb-primary-secret
+                  name: research-xbrl-secret
                   key: rdb-primary-user
             - name: FILESTORAGE_HOST
               value: sftp
@@ -48,8 +49,8 @@ spec:
             - name: FILESTORAGE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: sftp-server-secret
-                  key: password
+                  name: research-xbrl-secret
+                  key: file-storage-password
             - name: FILESTORAGE_BASEDIR
               value: upload
       restartPolicy: OnFailure

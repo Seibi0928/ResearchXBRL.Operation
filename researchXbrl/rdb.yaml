@@ -2,6 +2,7 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: auto-trade-storage
+  namespace: research-xbrl
 provisioner: kubernetes.io/azure-disk
 parameters:
   skuName: Standard_LRS
@@ -11,6 +12,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: auto-trade-storage
+  namespace: research-xbrl
 spec:
   accessModes:
   - ReadWriteOnce
@@ -20,18 +22,17 @@ spec:
       storage: 50Gi
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: rdb-primary
   labels:
     app: rdb-primary
+  namespace: research-xbrl
 spec:
-  replicas: 1
+  serviceName: rdb-primary
   selector:
     matchLabels:
       app: rdb-primary
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
@@ -44,17 +45,17 @@ spec:
         - name: POSTGRES_DB
           valueFrom:
             secretKeyRef:
-              name: rdb-primary-secret
+              name: research-xbrl-secret
               key: rdb-primary-db-name
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: rdb-primary-secret
+              name: research-xbrl-secret
               key: rdb-primary-password
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: rdb-primary-secret
+              name: research-xbrl-secret
               key: rdb-primary-user
         ports:
         - containerPort: 5432
@@ -67,4 +68,20 @@ spec:
       - name: primary-database
         persistentVolumeClaim:
           claimName: auto-trade-storage
-status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rdb-primary
+  namespace: research-xbrl
+  labels:
+    app: rdb-primary
+spec:
+  selector:
+    app: rdb-primary
+  ports:
+  - name: "5432"
+    port: 5432
+    targetPort: 5432
+status:
+  loadBalancer: {}
