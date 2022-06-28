@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: aquire-financial-report
+  name: acquire-financial-report
   namespace: research-xbrl
 spec:
   schedule: 0 1 * * *
@@ -13,7 +13,7 @@ spec:
       template:
         spec:
           containers:
-          - name: aquire-financial-report
+          - name: acquire-financial-report
             image: harunari/aquire_financial_reports_batch:stable-431
             imagePullPolicy: IfNotPresent
             env:
