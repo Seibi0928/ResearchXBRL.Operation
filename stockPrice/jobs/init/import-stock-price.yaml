@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: import-stock-price
-          image: harunari/import_stock_price:stable-449
+          image: harunari/import_stock_price:stable-455
           command: [
             "import_stock_price",
             "-f", 
