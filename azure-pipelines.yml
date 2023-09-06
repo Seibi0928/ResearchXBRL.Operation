@@ -8,10 +8,8 @@ steps:
 - task: Kubernetes@1
   displayName: 'apply rdb-primary-deployment'
   inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
-    azureResourceGroup: 'autoTrader'
-    kubernetesCluster: 'autoTrader'
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'mykube'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
@@ -20,10 +18,8 @@ steps:
 - task: Kubernetes@1
   displayName: 'apply rdb-primary-service'
   inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
-    azureResourceGroup: 'autoTrader'
-    kubernetesCluster: 'autoTrader'
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'mykube'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
@@ -32,10 +28,7 @@ steps:
 - task: Kubernetes@1
   displayName: 'apply api-deployment'
   inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
-    azureResourceGroup: 'autoTrader'
-    kubernetesCluster: 'autoTrader'
+    connectionType: 'Kubernetes Service Connection'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
@@ -44,10 +37,8 @@ steps:
 - task: Kubernetes@1
   displayName: 'apply api-service'
   inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
-    azureResourceGroup: 'autoTrader'
-    kubernetesCluster: 'autoTrader'
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'mykube'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
@@ -56,10 +47,8 @@ steps:
 - task: Kubernetes@1
   displayName: 'apply front-deployment'
   inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
-    azureResourceGroup: 'autoTrader'
-    kubernetesCluster: 'autoTrader'
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'mykube'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
@@ -68,10 +57,8 @@ steps:
 - task: Kubernetes@1
   displayName: 'apply front-service'
   inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
-    azureResourceGroup: 'autoTrader'
-    kubernetesCluster: 'autoTrader'
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'mykube'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
@@ -80,10 +67,8 @@ steps:
 - task: Kubernetes@1
   displayName: 'apply front-ingress'
   inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
-    azureResourceGroup: 'autoTrader'
-    kubernetesCluster: 'autoTrader'
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'mykube'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
@@ -92,10 +77,8 @@ steps:
 - task: Kubernetes@1
   displayName: 'apply cron job aquire-financial-reports'
   inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: '従量課金(e5c1b0a2-8d26-4e8a-a903-8e68ff7a62e3)'
-    azureResourceGroup: 'autoTrader'
-    kubernetesCluster: 'autoTrader'
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'mykube'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
