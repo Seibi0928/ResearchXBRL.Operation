@@ -5,19 +5,15 @@ metadata:
   namespace: logging
   labels:
     k8s-app: fluent-bit-logging
-    kubernetes.io/cluster-service: 'true'
-    version: v1
 spec:
   selector:
     matchLabels:
-      k8s-app: fluent-bit-logging
+      name: fluent-bit
   template:
     metadata:
       creationTimestamp: null
       labels:
-        k8s-app: fluent-bit-logging
-        kubernetes.io/cluster-service: 'true'
-        version: v1
+        name: fluent-bit
       annotations:
         prometheus.io/path: /api/v1/metrics/prometheus
         prometheus.io/port: '2020'
@@ -60,10 +56,6 @@ spec:
           imagePullPolicy: Always
       restartPolicy: Always
       terminationGracePeriodSeconds: 10
-      dnsPolicy: ClusterFirst
-      serviceAccountName: fluent-bit
-      serviceAccount: fluent-bit
-      schedulerName: default-scheduler
       tolerations:
         - key: node-role.kubernetes.io/master
           operator: Exists

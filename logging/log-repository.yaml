@@ -62,9 +62,9 @@ metadata:
   name: elasticsearch
   namespace: logging
 spec:
-  clusterIP: None
   selector:
     app: elasticsearch
+  type: NodePort
   ports:
   - port: 9200
     name: rest

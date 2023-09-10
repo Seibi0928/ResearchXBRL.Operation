@@ -31,7 +31,8 @@ metadata:
 spec:
   selector:
     app: kibana
-  type: LoadBalancer
+  type: NodePort
   ports:
   - port: 5601
     targetPort: 5601
+    nodePort: 30007

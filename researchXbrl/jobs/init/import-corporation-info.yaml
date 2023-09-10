@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: import-corporation-info
-          image: harunari/import_corporation_info_batch:stable-431
+          image: harunari/import_corporation_info_batch:stable-662
           env:
             - name: DB_NAME
               valueFrom:

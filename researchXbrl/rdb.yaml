@@ -1,22 +1,12 @@
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: auto-trade-storage
-  namespace: research-xbrl
-provisioner: kubernetes.io/azure-disk
-parameters:
-  skuName: Standard_LRS
-  location: japaneast
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: auto-trade-storage
+  name: auto-trade-storage-claim
   namespace: research-xbrl
 spec:
   accessModes:
   - ReadWriteOnce
-  storageClassName: auto-trade-storage
+  storageClassName: standard
   resources:
     requests:
       storage: 50Gi
@@ -40,7 +30,7 @@ spec:
     spec:
       containers:
       - name: rdb-primary
-        image: harunari/financial_report_primary_database:stable-361
+        image: harunari/financial_report_primary_database:stable-662
         env:
         - name: POSTGRES_DB
           valueFrom:
@@ -59,15 +49,15 @@ spec:
               key: rdb-primary-user
         ports:
         - containerPort: 5432
-        volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: primary-database
-          subPath: postgres
+        # volumeMounts:
+        # - mountPath: /var/lib/postgresql/data
+        #   name: primary-database
+        #   subPath: postgres
       restartPolicy: Always
-      volumes:
-      - name: primary-database
-        persistentVolumeClaim:
-          claimName: auto-trade-storage
+      # volumes:
+      # - name: primary-database
+      #   persistentVolumeClaim:
+      #     claimName: auto-trade-storage-claim
 ---
 apiVersion: v1
 kind: Service

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: acquire-account-items-recovery-20220629
+  name: acquire-account-items
   namespace: research-xbrl
 spec:
   backoffLimit: 6
@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: acquire-account-items
-          image: harunari/aquire_account_items_batch:stable-431
+          image: harunari/aquire_account_items_batch:stable-662
           env:
           - name: DB_NAME
             valueFrom:

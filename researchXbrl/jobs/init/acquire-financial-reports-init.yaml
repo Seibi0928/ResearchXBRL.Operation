@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: acquire-financial-report-recovery-20220629
+  name: acquire-financial-report
   namespace: research-xbrl
 spec:
   backoffLimit: 6
@@ -10,8 +10,8 @@ spec:
     spec:
       containers:
       - name: acquire-financial-report
-        image: harunari/aquire_financial_reports_batch:stable-468
-        command: ["dotnet", "/app/AquireFinancialReports.dll", "--from", "2020-3-4", "--to", "2022-5-11", "--max-parallelism", "2"]
+        image: harunari/aquire_financial_reports_batch:stable-662
+        command: ["dotnet", "/app/AquireFinancialReports.dll", "--from", "2018-9-11", "--max-parallelism", "1"]
         imagePullPolicy: IfNotPresent
         env:
         - name: DB_NAME

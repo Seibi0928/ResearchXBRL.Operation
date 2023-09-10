@@ -10,7 +10,7 @@ data:
   # ======================================================
   fluent-bit.conf: |
     [SERVICE]
-        Flush         2
+        Flush         1
         Log_Level     info
         Daemon        off
         Parsers_File  parsers.conf
@@ -26,8 +26,8 @@ data:
     [INPUT]
         Name              tail
         Tag               kube.*
-        Parser            docker
         Path              /var/log/containers/*.log
+        Parser            docker
         DB                /var/log/flb_kube.db
         Mem_Buf_Limit     5MB
         Skip_Long_Lines   On
@@ -38,8 +38,13 @@ data:
         Name                kubernetes
         Match               kube.*
         Kube_URL            https://kubernetes.default.svc:443
-        Merge_Log           Off
+        Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
+        Kube_Tag_Prefix     kube.var.log.containers.
+        Merge_Log           On
+        Merge_Log_Key       log_processed
         K8S-Logging.Parser  On
+        K8S-Logging.Exclude Off
 
   output-elasticsearch.conf: |
     [OUTPUT]
@@ -85,12 +90,11 @@ data:
         Time_Format %d/%b/%Y:%H:%M:%S %z
 
     [PARSER]
-        Format regex
-        Name docker
-        Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<capturedJson>.*)$
-        Time_Key time
-        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
-        Decode_Field json capturedJson
+        Name        docker
+        Format      json
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep   On
 
     [PARSER]
         # http://rubular.com/r/tjUt3Awgg4
